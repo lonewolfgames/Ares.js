@@ -1,30 +1,30 @@
-Odin.js
+Ares.js
 =======
 
-Node.js Canvas/WebGL Javascript Game Framework
+Node.js Canvas/WebGL Javascript App Framework
 
-[Examples](http://lonewolfgames.github.io/Odin.js/) - [Documentation](http://lonewolfgames.github.io/Odin.js/doc/)
+[Examples](http://lonewolfgames.github.io/Ares.js/) - [Documentation](http://lonewolfgames.github.io/Ares.js/doc/)
 
 
 ## How to install with npm
 ```
-// install the odin.js package
+// install the ares.js package
 // npm package is not updated as much as the github repository
 // right now it is better to download from github
-$ sudo npm install odin -g
+$ sudo npm install ares -g
 ```
 
 
-### Game
-a Game Class is the base for everything in your app, also check documentation for ClientGame and ServerGame
+### App
+a App Class is the base for everything in your app, also check documentation for ClientApp and ServerApp
 ```
-var MyGame = new Game({ /*options*/ }); // options effect Config.js
+var MyApp = new ClientApp({ /*options*/ }); // options effect Settings.js
 
 // to renderer a game we need an active scene and a camera component that is within the scene
 var camera = new GameObject({
     components: [
-        new Transform2D,
-        new Camera2D
+        new Transform,
+        new Camera
     ]
 });
 var scene = new Scene;
@@ -32,10 +32,10 @@ var scene = new Scene;
 //add camera to scene
 scene.addGameObject( camera );
 
-// then set Game's scene and camera
-// set scene first, because Game.setCamera needs an active scene
-MyGame.setScene( scene );
-MyGame.setCamera( camera );
+// then set App's scene and camera
+// set scene first, because App.setCamera needs an active scene
+MyApp.setScene( scene );
+MyApp.setCamera( camera );
 ```
 
 ### Scenes
@@ -43,7 +43,7 @@ Scenes hold and manage GameObjects and their Components
 ```
 var scene = new Scene({ /*options*/ });
 
-//Scenes must be added to game and set as the active scene to be able to render
+//Scenes must be added to game, set as the active scene to be able to render that scene
 game.addScene( scene );
 
 //other options are
@@ -52,7 +52,7 @@ game.addScenes( scene1, scene2, scene3... );
 //same as above
 game.add( scene1, scene2, scene3... );
 
-//then set game's active scene with Game.setScene
+//then set game's active scene with App.setScene
 game.setScene( scene );
 ```
 
@@ -63,9 +63,9 @@ GameObjects are containers that hold Components
 var player = new GameObject({
     components: [
         // every GameObject needs a Transform
-        new Transform2D({
-            position: new Vec2( 0, 5 ),
-            rotation: Math.PI*0.5
+        new Transform({
+            position: new Vec3( 0, 0, 5 ),
+            rotation: new Quat().rotate( 0, 0, Math.PI*0.5 )
         })
     ],
     tags: [
@@ -84,23 +84,23 @@ scene.add( gameObject1, gameObject2, gameObject3... );
 ```
 
 
-## Setting up a Game Environment
+## Setting up a App Environment
 
 ```
-// create odin environment, pass -s to create a server based environment
-$ odin new MyGame
-$ cd MyGame/
+// create ares environment, pass -s to create a server based environment
+$ ares new MyApp
+$ cd MyApp/
 ```
 directory structure looks like
 ```
-MyGame/
+MyApp/
 ----assets/
 ----build/
 ----lib/
 --------require.js
 ----src
---------odin/
-------------"odin source files"
+--------ares/
+------------"ares source files"
 --------index.js
 ----build.js
 ----index.html
@@ -118,5 +118,5 @@ $ node src/server.js
 
 // console should log this
     info  - socket.io started
-Game started at 127.0.0.1:3000
+App started at 127.0.0.1:3000
 ```
