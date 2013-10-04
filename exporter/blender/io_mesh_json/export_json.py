@@ -31,56 +31,30 @@ MAT4X4 = "[%s,%s,%s,%s, %s,%s,%s,%s, %s,%s,%s,%s, %s,%s,%s,%s]"
 def mat4_string( m ):
     return MAT4X4 % ( m[0][0],m[1][0],m[2][0],m[3][0], m[0][1],m[1][1],m[2][1],m[3][1], m[0][2],m[1][2],m[2][2],m[3][2], m[0][3],m[1][3],m[2][3],m[3][3] )
 
-def get_action_state( action, bone, frame ):
-    ngroups = len( action.groups )
+def get_armature():
+    if len(bpy.data.armatures) == 0:
+        print("Warning: no armatures in the scene")
+        return None, None
+
+    armature = bpy.data.armatures[0]
     
-    pos = mathutils.Vector((0,0,0))
-    rot = mathutils.Quaternion((0,0,0,1))
-    scl = mathutils.Vector((1,1,1))
+    for object in bpy.data.objects:
+        if object.type == 'ARMATURE':
+            return armature, object
+
+    print("Warning: no node of type 'ARMATURE' in the scene")
+    return None, None
+
+def get_action_state( frame, action, bone, armatureObject ):
+    bonePose = armatureObject.pose.bones[ bone.name ]
     
-    if ngroups > 0:
-        index = 0
-        
-        for i in range( ngroups ):
-            if action.groups[i].name == bone.name:
-                index = i
-        
-        for channel in action.groups[index].channels:
-            value = channel.evaluate( frame )
-            
-            if "location" in channel.data_path:
-                if channel.array_index == 0:
-                    pos.x = value
-                elif channel.array_index == 1:
-                    pos.y = value
-                elif channel.array_index == 2:
-                    pos.z = value
-            
-            if "quaternion" in channel.data_path:
-                if channel.array_index == 0:
-                    rot.w = value
-                elif channel.array_index == 1:
-                    rot.x = value
-                elif channel.array_index == 2:
-                    rot.y = value
-                elif channel.array_index == 3:
-                    rot.z = value
-            
-            if "scale" in channel.data_path:
-                if channel.array_index == 0:
-                    scl.x = value
-                elif channel.array_index == 1:
-                    scl.y = value
-                elif channel.array_index == 2:
-                    scl.z = value
+    armatureObject.animation_data.action = bpy.data.actions[ action.name ]
+    bpy.context.scene.frame_set( frame );
     
-    if bone.parent == None:
-        pos = ( bone.head_local * bone.matrix_local.inverted() ) + pos
-    else:
-        pos = bone.head_local + pos
+    bindPose = bone.matrix_local.inverted()
+    boneMatrix = bonePose.matrix * bindPose
     
-    rot = bone.matrix_local.to_quaternion() * rot
-    rot.normalize()
+    pos, rot, scl =  boneMatrix.decompose()
     
     return pos, rot, scl
     
@@ -120,13 +94,9 @@ TEMPLATE_BONE = """\
     "name": "%(name)s",
     "skinned": %(skinned)s,
 
-    "bindPose": %(bindPose)s,
     "position": [%(position)s],
     "rotation": [%(rotation)s],
-    "scale": [1,1,1],
-    
-    "inheritRotation": %(inheritRotation)s,
-    "inheritScale": %(inheritScale)s
+    "scale": [1,1,1]
 }
 """
 
@@ -139,7 +109,7 @@ def get_animation():
         return ""
     
     fps = bpy.data.scenes[0].render.fps
-    armature = bpy.data.armatures[0]
+    armature, armatureObject = get_armature()
     animations_string = ""
     
     count = -1;
@@ -157,8 +127,8 @@ def get_animation():
         for frame in range( frame_length ):
             key_frame = []
             
-            for hierarchy in armature.bones:
-                pos, rot, scl = get_action_state( action, hierarchy, frame )
+            for bone in armature.bones:
+                pos, rot, scl = get_action_state( frame, action, bone, armatureObject )
                 
                 px, py, pz = pos.x, pos.y, pos.z
                 rx, ry, rz, rw = rot.x, rot.y, rot.z, rot.w
@@ -277,13 +247,10 @@ def get_mesh_string( obj ):
             parent_index = -1
             weight = 0
             skinned = "false"
-            inheritRotation = "false"
-            inheritScale = "false"
-            
             name = bone.name
-            pos = bone.head_local
-            rot = bone.matrix_local.to_quaternion()
-            bindPose = bone.matrix_local.inverted()
+            
+            pos = bone.head
+            rot = bone.matrix_local.inverted().to_quaternion()
             
             if bone.parent != None:
                 parent_index = i = 0
@@ -302,21 +269,12 @@ def get_mesh_string( obj ):
             if weight > 0:
                 skinned = "true"
             
-            if bone.use_inherit_rotation:
-                inheritRotation = "true"
-            
-            if bone.use_inherit_scale:
-                inheritScale = "true"
-            
             bones.append(TEMPLATE_BONE % {
                 "parent": parent_index,
                 "name": name,
                 "skinned": skinned,
-                "bindPose": mat4_string( bindPose ),
                 "position": ", ".join([ str(pos.x), str(pos.y), str(pos.z) ]),
-                "rotation": ", ".join([ str(rot.x), str(rot.y), str(rot.z), str(rot.w) ]),
-                "inheritRotation": inheritRotation,
-                "inheritScale": inheritScale,
+                "rotation": ", ".join([ str(rot.x), str(rot.y), str(rot.z), str(rot.w) ])
             })
         
     return TEMPLATE_FILE % {

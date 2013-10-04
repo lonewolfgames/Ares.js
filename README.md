@@ -1,7 +1,7 @@
 Ares.js
 =======
 
-Node.js Canvas/WebGL Javascript App Framework
+Node.js WebGL Javascript App Framework
 
 [Examples](http://lonewolfgames.github.io/Ares.js/) - [Documentation](http://lonewolfgames.github.io/Ares.js/doc/)
 
