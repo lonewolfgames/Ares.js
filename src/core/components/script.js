@@ -10,17 +10,17 @@ define([
 
 
         /**
-         * @class Script
-         * @extends Component
-         * @brief base class for manipulating GameObjects and their Components
-         * @param String name
-         */
+        * @class Script
+        * @extends Component
+        * @brief base class for manipulating GameObjects and their Components
+        * @param String name
+        */
 
         function Script(name) {
 
             Component.call(this, typeof(name) === "string" ? name : "Script");
         }
-
+        
         Class.extend(Script, Component);
 
 
@@ -51,24 +51,24 @@ define([
         };
 
         /**
-         * @method onInit
-         * @memberof Script
-         * @brief called when GameObject is added to scene
-         */
+        * @method onInit
+        * @memberof Script
+        * @brief called when GameObject is added to scene
+        */
         Script.prototype.onInit = function() {};
 
         /**
-         * @method onInit
-         * @memberof Script
-         * @brief called every frame
-         */
+        * @method onInit
+        * @memberof Script
+        * @brief called every frame
+        */
         Script.prototype.onUpdate = function() {};
 
         /**
-         * @method onDestroy
-         * @memberof Script
-         * @brief called when this is destroyed
-         */
+        * @method onDestroy
+        * @memberof Script
+        * @brief called when this is destroyed
+        */
         Script.prototype.onDestroy = function() {};
 
 

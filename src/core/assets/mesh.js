@@ -23,11 +23,11 @@ define([
             cos = Math.cos;
 
         /**
-         * @class Mesh
-         * @extends Class
-         * @brief base class for handling mesh data, pass JSON object in data to set from
-         * @param Object options
-         */
+        * @class Mesh
+        * @extends Class
+        * @brief base class for handling mesh data, pass JSON object in data to set from
+        * @param Object options
+        */
 
         function Mesh(opts) {
             opts || (opts = Class.OBJECT);
@@ -35,94 +35,123 @@ define([
             Class.call(this);
 
             /**
-             * @property Array vertices
-             * @memberof Mesh
-             */
+            * @property Array vertices
+            * @memberof Mesh
+            */
             this.vertices = opts.vertices !== undefined ? opts.vertices : [];
 
             /**
-             * @property Array normals
-             * @memberof Mesh
-             */
+            * @property Array normals
+            * @memberof Mesh
+            */
             this.normals = opts.normals !== undefined ? opts.normals : [];
 
             /**
-             * @property Array tangents
-             * @memberof Mesh
-             */
+            * @property Array tangents
+            * @memberof Mesh
+            */
             this.tangents = opts.tangents !== undefined ? opts.tangents : [];
 
             /**
-             * @property Array faces
-             * @memberof Mesh
-             */
+            * @property Array faces
+            * @memberof Mesh
+            */
             this.faces = opts.faces !== undefined ? opts.faces : [];
 
             /**
-             * @property Array colors
-             * @memberof Mesh
-             */
+            * @property Array colors
+            * @memberof Mesh
+            */
             this.colors = opts.colors !== undefined ? opts.colors : [];
 
             /**
-             * @property Array uvs
-             * @memberof Mesh
-             */
+            * @property Array uvs
+            * @memberof Mesh
+            */
             this.uvs = opts.uvs !== undefined ? opts.uvs : [];
 
             /**
-             * @property Array bones
-             * @memberof Mesh
-             */
+            * @property Array bones
+            * @memberof Mesh
+            */
             this.bones = opts.bones !== undefined ? opts.bones : [];
 
             /**
-             * @property Array boneIndices
-             * @memberof Mesh
-             */
+            * @property Array boneIndices
+            * @memberof Mesh
+            */
             this.boneIndices = opts.boneIndices !== undefined ? opts.boneIndices : [];
 
             /**
-             * @property Array boneWeights
-             * @memberof Mesh
-             */
+            * @property Array boneWeights
+            * @memberof Mesh
+            */
             this.boneWeights = opts.boneWeights !== undefined ? opts.boneWeights : [];
 
             /**
-             * @property Object animations
-             * @memberof Mesh
-             */
+            * @property Object animations
+            * @memberof Mesh
+            */
             this.animations = opts.animations !== undefined ? opts.animations : {};
 
             /**
-             * @property Boolean dynamic
-             * @memberof Mesh
-             */
+            * @property Boolean dynamic
+            * @memberof Mesh
+            */
             this.dynamic = opts.dynamic !== undefined ? !! opts.dynamic : false;
 
             /**
-             * @property Boolean useBones
-             * @memberof Mesh
-             */
+            * @property Boolean useBones
+            * @memberof Mesh
+            */
             this.useBones = opts.useBones !== undefined ? !! opts.useBones : false;
 
             /**
-             * @property AABB3 aabb
-             * @memberof Mesh
-             */
+            * @property AABB3 aabb
+            * @memberof Mesh
+            */
             this.aabb = new AABB3;
             if (opts.vertices) this.aabb.fromPoints(this.vertices);
 
             this._needsUpdate = true;
 
-            if (opts.data) this.fromJSON(opts.data);
+            if (opts.data) this.fromData(opts.data);
         }
 
         Class.extend(Mesh, Class);
 
 
         Mesh.prototype.copy = function(other) {
-
+            var vertices = this.vertices,
+                normals = this.normals,
+                tangents = this.tangents,
+                colors = this.colors,
+                uvs = this.uvs,
+                bones = this.bones,
+                
+                otherVertices = other.vertices,
+                otherNormals = other.normals,
+                otherTangents = other.tangents,
+                otherColors = other.colors,
+                otherUvs = other.uvs,
+                otherBones = other.bones,
+                i, il;
+            
+            vertices.length = normals.length = tangents.length = colors.length = uvs.length = bones.length = 0;
+            
+            for (i = 0, il = otherVertices.length; i < il; i++) vertices.push(new Vec3().fromJSON(otherVertices[i]));
+            for (i = 0, il = otherNormals.length; i < il; i++) normals.push(new Vec3().fromJSON(otherNormals[i]));
+            for (i = 0, il = otherTangents.length; i < il; i++) tangents.push(new Vec4().fromJSON(otherTangents[i]));
+            for (i = 0, il = otherColors.length; i < il; i++) colors.push(new Color().fromJSON(otherColors[i]));
+            for (i = 0, il = otherUvs.length; i < il; i++) uvs.push(new Vec2().fromJSON(otherUvs[i]));
+            for (i = 0, il = otherBones.length; i < il; i++) bones.push(new Bone().fromJSON(otherBones[i]));
+            
+            this.faces = other.faces.slice(0);
+            this.boneWeights = other.boneWeights.slice(0);
+            this.boneIndices = other.boneIndices.slice(0);
+            
+            this.animations = other.animations || {};
+            
             return this;
         };
 
@@ -133,11 +162,11 @@ define([
         };
 
         /**
-         * @method calculateNormals
-         * @memberof Mesh
-         * @brief calculates the normals of the mesh from the triangles and vertices
-         * @return this
-         */
+        * @method calculateNormals
+        * @memberof Mesh
+        * @brief calculates the normals of the mesh from the triangles and vertices
+        * @return this
+        */
         Mesh.prototype.calculateNormals = function() {
             var u = new Vec3,
                 v = new Vec3,
@@ -191,11 +220,11 @@ define([
         }();
 
         /**
-         * @method calculateTangents
-         * @memberof Mesh
-         * @brief calculates the tangents of the mesh from the triangles, vertices and uvs
-         * @return this
-         */
+        * @method calculateTangents
+        * @memberof Mesh
+        * @brief calculates the tangents of the mesh from the triangles, vertices and uvs
+        * @return this
+        */
         Mesh.prototype.calculateTangents = function() {
             var tan1 = [],
                 tan2 = [],
@@ -325,16 +354,89 @@ define([
                 index, index + 2, index + 3
             );
         };
+        
+        function arrayToJSON( array ){
+            var newArray = [],
+                len = array.length,
+                i;
+            
+            for (i=0; i < len; i++) newArray.push(array[i].toJSON());
+            
+            return newArray;
+        }
+        
+        /**
+        * @method toJSON
+        * @memberof Mesh
+        * @brief returns this as JSON
+        * @return Object
+        */
+        Mesh.prototype.toJSON = function() {
+            
+            return {
+                vertices: arrayToJSON(this.vertices),
+                normals: arrayToJSON(this.normals),
+                tangents: arrayToJSON(this.tangents),
+                faces: this.faces.slice(0),
+                colors: arrayToJSON(this.colors),
+                uvs: arrayToJSON(this.uvs),
+                bones: arrayToJSON(this.bones),
+                boneWeights: this.boneWeights.slice(0),
+                boneIndices: this.boneIndices.slice(0),
+                animations: this.animations
+            };
+        };
+        
+        /**
+        * @method fromJSON
+        * @memberof Mesh
+        * @brief returns this from JSON object
+        * @param Object json
+        * @return this
+        */
+        Mesh.prototype.fromJSON = function(json) {
+            var vertices = this.vertices,
+                normals = this.normals,
+                tangents = this.tangents,
+                colors = this.colors,
+                uvs = this.uvs,
+                bones = this.bones,
+                
+                jsonVertices = json.vertices,
+                jsonNormals = json.normals,
+                jsonTangents = json.tangents,
+                jsonColors = json.colors,
+                jsonUvs = json.uvs,
+                jsonBones = json.bones,
+                i, il;
+            
+            vertices.length = normals.length = tangents.length = colors.length = uvs.length = bones.length = 0;
+            
+            for (i = 0, il = jsonVertices.length; i < il; i++) vertices.push(new Vec3().fromJSON(jsonVertices[i]));
+            for (i = 0, il = jsonNormals.length; i < il; i++) normals.push(new Vec3().fromJSON(jsonNormals[i]));
+            for (i = 0, il = jsonTangents.length; i < il; i++) tangents.push(new Vec4().fromJSON(jsonTangents[i]));
+            for (i = 0, il = jsonColors.length; i < il; i++) colors.push(new Color().fromJSON(jsonColors[i]));
+            for (i = 0, il = jsonUvs.length; i < il; i++) uvs.push(new Vec2().fromJSON(jsonUvs[i]));
+            for (i = 0, il = jsonBones.length; i < il; i++) bones.push(new Bone().fromJSON(jsonBones[i]));
+            
+            this.faces = json.faces.slice(0);
+            this.boneWeights = json.boneWeights.slice(0);
+            this.boneIndices = json.boneIndices.slice(0);
+            
+            this.animations = json.animations || {};
+            
+            return this;
+        };
 
         var EMPTY_ARRAY = [];
         /**
-         * @method fromJSON
-         * @memberof Mesh
-         * @brief sets mesh data from Object
-         * @param Object json
-         * @return this
-         */
-        Mesh.prototype.fromJSON = function(json) {
+        * @method fromData
+        * @memberof Mesh
+        * @brief sets mesh data from raw data
+        * @param Object data
+        * @return this
+        */
+        Mesh.prototype.fromData = function(data) {
             var vertices = this.vertices,
                 normals = this.normals,
                 tangents = this.tangents,
@@ -342,34 +444,33 @@ define([
                 colors = this.colors,
                 uvs = this.uvs,
                 bones = this.bones,
-                bone, bonei, bonej,
                 boneWeights = this.boneWeights,
                 boneIndices = this.boneIndices,
-                items, item,
+                bone, bonei, bonej, items, item,
                 i, il, j, jl;
 
             vertices.length = normals.length = tangents.length = faces.length = colors.length = uvs.length = 0;
             bones.length = boneWeights.length = boneIndices.length = 0;
 
-            items = json.vertices || EMPTY_ARRAY;
+            items = data.vertices || EMPTY_ARRAY;
             for (i = 0, il = items.length; i < il; i += 3) vertices.push(new Vec3(items[i], items[i + 1], items[i + 2]));
 
-            items = json.normals || EMPTY_ARRAY;
+            items = data.normals || EMPTY_ARRAY;
             for (i = 0, il = items.length; i < il; i += 3) normals.push(new Vec3(items[i], items[i + 1], items[i + 2]));
 
-            items = json.tangents || EMPTY_ARRAY;
+            items = data.tangents || EMPTY_ARRAY;
             for (i = 0, il = items.length; i < il; i += 4) tangents.push(new Vec4(items[i], items[i + 1], items[i + 2], items[i + 3]));
 
-            items = json.faces || EMPTY_ARRAY;
+            items = data.faces || EMPTY_ARRAY;
             for (i = 0, il = items.length; i < il; i += 3) faces.push(items[i], items[i + 1], items[i + 2]);
 
-            items = json.colors || EMPTY_ARRAY;
+            items = data.colors || EMPTY_ARRAY;
             for (i = 0, il = items.length; i < il; i += 3) colors.push(new Color(items[i], items[i + 1], items[i + 2]));
 
-            items = json.uvs || EMPTY_ARRAY;
+            items = data.uvs || EMPTY_ARRAY;
             for (i = 0, il = items.length; i < il; i += 2) uvs.push(new Vec2(items[i], items[i + 1]));
 
-            items = json.bones || EMPTY_ARRAY;
+            items = data.bones || EMPTY_ARRAY;
             for (i = 0, il = items.length; i < il; i++) {
                 item = items[i];
 
@@ -391,27 +492,27 @@ define([
             }
             if (items.length) this.useBones = true;
 
-            items = json.boneWeights || EMPTY_ARRAY;
+            items = data.boneWeights || EMPTY_ARRAY;
             for (i = 0, il = items.length; i < il; i++) boneWeights.push(items[i]);
 
-            items = json.boneIndices || EMPTY_ARRAY;
+            items = data.boneIndices || EMPTY_ARRAY;
             for (i = 0, il = items.length; i < il; i++) boneIndices.push(items[i]);
 
-            this.animations = json.animations;
+            this.animations = data.animations;
             this.aabb.fromPoints(this.vertices);
 
             return this;
         };
 
         /**
-         * @method Mesh.Sphere
-         * @memberof Mesh
-         * @brief creates sphere from radius segments and rings
-         * @param Number radius
-         * @param Number segments
-         * @param Number rings
-         * @return Mesh
-         */
+        * @method Mesh.Sphere
+        * @memberof Mesh
+        * @brief creates sphere from radius segments and rings
+        * @param Number radius
+        * @param Number segments
+        * @param Number rings
+        * @return Mesh
+        */
         Mesh.Sphere = function(radius, segments, rings) {
             radius = radius !== undefined ? radius : 0.5;
             segments = (segments !== undefined ? floor(max(segments, 3)) : 16) + 1;
@@ -459,14 +560,14 @@ define([
         };
 
         /**
-         * @method Mesh.Cube
-         * @memberof Mesh
-         * @brief creates cube from width height and depth
-         * @param Number width
-         * @param Number height
-         * @param Number depth
-         * @return Mesh
-         */
+        * @method Mesh.Cube
+        * @memberof Mesh
+        * @brief creates cube from width height and depth
+        * @param Number width
+        * @param Number height
+        * @param Number depth
+        * @return Mesh
+        */
         Mesh.Cube = function(width, height, depth, widthSegments, heightSegments, depthSegments) {
             var w = (width || 1) * 0.5,
                 h = (height || 1) * 0.5,

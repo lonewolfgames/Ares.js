@@ -6,22 +6,22 @@ define(
         "use strict";
 
         /**
-         * @library Ares.js
-         * @version 0.0.1
-         * @brief WebGL/Canvas Javascript Game Engine
-         */
+        * @library Ares.js
+        * @version 0.0.1
+        * @brief WebGL/Canvas Javascript Game Engine
+        */
 
         /**
-         * @class Ares
-         * @brief namespace
-         */
+        * @class Ares
+        * @brief namespace
+        */
         var Ares = {};
 
         /**
-         * @method globalize
-         * @memberof Ares
-         * @brief globalizes Ares Classes
-         */
+        * @method globalize
+        * @memberof Ares
+        * @brief globalizes Ares Classes
+        */
         Ares.globalize = function() {
 
             for (var key in this) {
@@ -30,7 +30,8 @@ define(
             window.Ares = this;
         };
 
-
+        Ares.Phys2D = require("phys2d/phys2d");
+        
         Ares.Class = require("base/class");
         Ares.Device = require("base/device");
         Ares.Dom = require("base/dom");
@@ -39,6 +40,7 @@ define(
 
         Ares.App = require("core/app/app");
         Ares.ClientApp = require("core/app/clientapp");
+        Ares.Loop = require("core/app/loop");
         Ares.Settings = require("core/app/settings");
 
         Ares.Asset = require("core/assets/asset");

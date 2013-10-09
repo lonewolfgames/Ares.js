@@ -10,10 +10,9 @@ define(
             shift = Array.prototype.shift;
 
         /**
-         * @class Class
-         * @brief base class for all objects
-         */
-
+        * @class Class
+        * @brief base class for all objects
+        */
         function Class() {
 
             this._id = id++;
@@ -22,10 +21,10 @@ define(
 
 
         /**
-         * @method clone
-         * @memberof Class
-         * @brief return a new instance of this Object
-         */
+        * @method clone
+        * @memberof Class
+        * @brief return a new instance of this Object
+        */
         Class.prototype.clone = function() {
             var clone = new this.constructor;
             clone.copy(this);
@@ -34,24 +33,24 @@ define(
         };
 
         /**
-         * @method copy
-         * @memberof Class
-         * @brief copies other object, override when extending
-         * @param Class other
-         */
+        * @method copy
+        * @memberof Class
+        * @brief copies other object, override when extending
+        * @param Class other
+        */
         Class.prototype.copy = function() {
 
             return this;
         };
 
         /**
-         * @method on
-         * @memberof Class
-         * @brief add listener to be called when event type is emitted
-         * @param String type
-         * @param Function listener
-         * @return this
-         */
+        * @method on
+        * @memberof Class
+        * @brief add listener to be called when event type is emitted
+        * @param String type
+        * @param Function listener
+        * @return this
+        */
         Class.prototype.on = function(type, listener) {
 
             (this._events[type] || (this._events[type] = [])).push(listener);
@@ -60,13 +59,13 @@ define(
         };
 
         /**
-         * @method once
-         * @memberof Class
-         * @brief add listener to be called when event type is emitted only once
-         * @param String type
-         * @param Function listener
-         * @return this
-         */
+        * @method once
+        * @memberof Class
+        * @brief add listener to be called when event type is emitted only once
+        * @param String type
+        * @param Function listener
+        * @return this
+        */
         Class.prototype.once = function(type, listener) {
 
             function once() {
@@ -81,13 +80,13 @@ define(
         };
 
         /**
-         * @method off
-         * @memberof Class
-         * @brief removes listener with type, if no type is given all events are removed, if listener not passed all events under type are removed
-         * @param String type
-         * @param Function listener
-         * @return this
-         */
+        * @method off
+        * @memberof Class
+        * @brief removes listener with type, if no type is given all events are removed, if listener not passed all events under type are removed
+        * @param String type
+        * @param Function listener
+        * @return this
+        */
         Class.prototype.off = function(type, listener) {
             var events = this._events[type],
                 handler,
@@ -120,12 +119,12 @@ define(
         };
 
         /**
-         * @method emit
-         * @memberof Class
-         * @brief emits event, arguments after the type will be passed to the event's callback
-         * @param String type
-         * @return this
-         */
+        * @method emit
+        * @memberof Class
+        * @brief emits event, arguments after the type will be passed to the event's callback
+        * @param String type
+        * @return this
+        */
         Class.prototype.emit = function(type) {
             var events = this._events[type],
                 i;
@@ -138,25 +137,36 @@ define(
 
             return this;
         };
-
+        
         /**
-         * @method Class.extend
-         * @memberof Class
-         * @brief makes child extend parent, make sure to use parent.call( this ) within the child constructor
-         * @param Constructor chlid
-         * @param Constructor parent
-         */
+        * @method onExtend
+        * @memberof Class
+        * @brief called on extend if defined
+        * @param Class child
+        */
+        Class.prototype.onExtend = undefined;
+        
+        /**
+        * @method Class.extend
+        * @memberof Class
+        * @brief makes child extend parent, make sure to use parent.call( this ) within the child constructor
+        * @param Constructor chlid
+        * @param Constructor parent
+        */
         Class.extend = function(child, parent) {
             var parentProto = parent.prototype,
-                childProto = child.prototype = Object.create(parentProto);
+                childProto = child.prototype = Object.create(parentProto),
+                key;
 
-            for (var key in parentProto) {
+            for (key in parentProto) {
 
                 if (!childProto.hasOwnProperty(key)) childProto[key] = parentProto[key];
             }
 
             childProto._super = parentProto;
             childProto.constructor = child;
+            
+            if( parentProto.onExtend ) parentProto.onExtend( child );
         };
 
 

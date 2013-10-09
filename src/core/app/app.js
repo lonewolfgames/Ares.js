@@ -10,11 +10,11 @@ define([
 
 
         /**
-         * @class App
-         * @extends Class
-         * @brief base class for managing applications
-         * @param Object options
-         */
+        * @class App
+        * @extends Class
+        * @brief base class for managing applications
+        * @param Object options
+        */
 
         function App(opts) {
             opts || (opts = Class.OBJECT);
@@ -22,9 +22,9 @@ define([
             Class.call(this);
 
             /**
-             * @property Array scenes
-             * @memberof App
-             */
+            * @property Array scenes
+            * @memberof App
+            */
             this.scenes = [];
             this._sceneHash = {};
             this._sceneHashServer = {};
@@ -35,12 +35,12 @@ define([
 
 
         /**
-         * @method addScene
-         * @memberof App
-         * @brief adds Scene to App
-         * @param Scene scene
-         * @return this
-         */
+        * @method addScene
+        * @memberof App
+        * @brief adds Scene to App
+        * @param Scene scene
+        * @return this
+        */
         App.prototype.addScene = function(scene) {
             if (!(scene instanceof Scene)) {
                 console.warn("App.addScene: can\'t add passed argument, it is not instance of Scene");
@@ -59,6 +59,8 @@ define([
                 if (scene._serverId !== -1) this._sceneHashServer[scene._serverId] = scene;
 
                 this._sceneNameHash[scene.name] = scene;
+                
+                scene.init();
             } else {
                 console.warn("App.addScene: Scene is already a member of this");
             }
@@ -67,11 +69,11 @@ define([
         };
 
         /**
-         * @method addScenes
-         * @memberof App
-         * @brief adds all Scenes in arguments to App
-         * @return this
-         */
+        * @method addScenes
+        * @memberof App
+        * @brief adds all Scenes in arguments to App
+        * @return this
+        */
         App.prototype.addScenes = function() {
 
             for (var i = arguments.length; i--;) this.addScene(arguments[i]);
@@ -80,12 +82,12 @@ define([
         };
 
         /**
-         * @method removeScene
-         * @memberof App
-         * @brief removes Scene from App
-         * @param Scene scene
-         * @return this
-         */
+        * @method removeScene
+        * @memberof App
+        * @brief removes Scene from App
+        * @param Scene scene
+        * @return this
+        */
         App.prototype.removeScene = function(scene) {
             if (!(scene instanceof Scene)) {
                 console.warn("App.removeScene: can\'t remove passed argument, it is not instance of Scene");
@@ -110,11 +112,11 @@ define([
         };
 
         /**
-         * @method removeScenes
-         * @memberof Scene
-         * @brief removes all Scenes in arguments from App
-         * @return this
-         */
+        * @method removeScenes
+        * @memberof Scene
+        * @brief removes all Scenes in arguments from App
+        * @return this
+        */
         App.prototype.removeScenes = function() {
 
             for (var i = arguments.length; i--;) this.removeScene(arguments[i]);
@@ -123,36 +125,36 @@ define([
         };
 
         /**
-         * @method getSceneByName
-         * @memberof App
-         * @brief returns Scene by name
-         * @param String name
-         * @return Scene
-         */
+        * @method getSceneByName
+        * @memberof App
+        * @brief returns Scene by name
+        * @param String name
+        * @return Scene
+        */
         App.prototype.getSceneByName = function(name) {
 
             return this._sceneNameHash[name];
         };
 
         /**
-         * @method getSceneById
-         * @memberof App
-         * @brief returns Scene by id
-         * @param Number id
-         * @return Scene
-         */
+        * @method getSceneById
+        * @memberof App
+        * @brief returns Scene by id
+        * @param Number id
+        * @return Scene
+        */
         App.prototype.getSceneById = function(id) {
 
             return this._sceneHash[id];
         };
 
         /**
-         * @method getGameObjectByServerId
-         * @memberof App
-         * @brief returns GameObject by server id
-         * @param Number id
-         * @return Scene
-         */
+        * @method getGameObjectByServerId
+        * @memberof App
+        * @brief returns GameObject by server id
+        * @param Number id
+        * @return Scene
+        */
         App.prototype.getSceneByServerId = function(id) {
 
             return this._sceneHashServer[id];

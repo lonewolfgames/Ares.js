@@ -22,9 +22,9 @@ define([
             clamp01 = Mathf.clamp01;
 
         /**
-         * @class Animation
-         * @extends Component
-         */
+        * @class Animation
+        * @extends Component
+        */
 
         function Animation(opts) {
             opts || (opts = Class.OBJECT);
@@ -32,57 +32,58 @@ define([
             Component.call(this, "Animation");
 
             /**
-             * @property String current
-             * @brief current animation
-             * @memberof Animation
-             */
+            * @property String current
+            * @brief current animation
+            * @memberof Animation
+            */
             this.current = opts.current || "idle";
 
             /**
-             * @property Number mode
-             * @brief animation playback type ( 0 - Animation.ONCE, 1 - Animation.LOOP, or 2 - Animation.PINGPONG )
-             * @memberof Animation
-             */
+            * @property Number mode
+            * @brief animation playback type ( 0 - Animation.ONCE, 1 - Animation.LOOP, or 2 - Animation.PINGPONG )
+            * @memberof Animation
+            */
             this.mode = opts.mode || LOOP;
 
             /**
-             * @property Boolean playing
-             * @brief is playing animation
-             * @memberof Animation
-             */
+            * @property Boolean playing
+            * @brief is playing animation
+            * @memberof Animation
+            */
             this.playing = opts.playing !== undefined ? !! opts.playing : true;
 
             /**
-             * @property Number rate
-             * @brief rate of the animation
-             * @memberof Animation
-             */
+            * @property Number rate
+            * @brief rate of the animation
+            * @memberof Animation
+            */
             this.rate = opts.rate || 1 / 60;
 
             /**
-             * @property Number frame
-             * @memberof Animation
-             */
+            * @property Number frame
+            * @memberof Animation
+            */
             this.frame = 0;
 
             /**
-             * @property Number order
-             * @memberof Animation
-             */
+            * @property Number order
+            * @memberof Animation
+            */
             this.order = opts.order || 1;
 
             /**
-             * @property Array bones
-             * @brief every animation copies bones from MeshAsset to allow indepenent animations
-             * @memberof Animation
-             */
+            * @property Array bones
+            * @brief every animation copies bones from MeshAsset to allow indepenent animations
+            * @memberof Animation
+            */
             this.bones = [];
             this._boneHash = {};
 
             this._time = 0;
             this._lastFrame = this.frame;
         }
-
+		
+		Animation.name = "Animation";
         Class.extend(Animation, Component);
 
 
@@ -122,15 +123,15 @@ define([
             ROTATION = new Quat,
             LAST_ROTATION = new Quat,
             SCALE = new Vec3,
-            LAST_SCALE = new Vec3,
-            MATRIX = new Mat4;
+            LAST_SCALE = new Vec3;
 
         Animation.prototype.update = function() {
             var bones = this.bones;
 
             if (!this.playing || !bones) return;
 
-            var meshfilter = this.meshfilter,
+            var transform = this.transform,
+				meshfilter = this.meshfilter,
                 mesh = meshfilter.mesh,
                 animations = mesh.animations,
                 animation = animations[this.current];
@@ -144,8 +145,7 @@ define([
                 order = this.order,
                 time, frame = this.frame,
                 lastFrame = this._lastFrame,
-                alpha,
-                frameState, lastFrameState, bone, matrixBone, matrix, pos, rot, scl, parent, boneFrame, lastBoneFrame,
+                alpha, frameState, lastFrameState, bone, matrixBone, matrix, pos, rot, scl, parent, boneFrame, lastBoneFrame,
                 i, il;
 
             time = this._time += dt;
@@ -166,6 +166,7 @@ define([
                         } else if (mode === LOOP) {
                             frame = 0;
                         } else if (mode === ONCE) {
+							this.frame = length;
                             this.stop();
                             return;
                         }
@@ -178,6 +179,7 @@ define([
                         } else if (mode === LOOP) {
                             frame = length;
                         } else if (mode === ONCE) {
+							this.frame = 0;
                             this.stop();
                             return;
                         }
@@ -213,16 +215,16 @@ define([
                 SCALE.set(boneFrame[7], boneFrame[8], boneFrame[9]);
 
                 pos.vlerp(LAST_POSITION, POSITION, alpha);
-                rot.qnlerp(LAST_ROTATION, ROTATION, alpha);
+                rot.qlerp(LAST_ROTATION, ROTATION, alpha);
                 scl.vlerp(LAST_SCALE, SCALE, alpha);
 				
 				matrixBone.compose(pos, scl, rot);
-                matrix.copy(matrixBone);
+				matrix.copy(matrixBone);
 
                 parent = bone.parent;
-
+				
                 if (parent) {
-                    bone.matrixWorld.mmul(parent.matrixWorld, matrix);
+					bone.matrixWorld.mmul(parent.matrixWorld, matrix);
                 } else {
                     bone.matrixWorld.copy(matrix);
                 }
@@ -230,15 +232,15 @@ define([
         };
 
         /**
-         * @method play
-         * @memberof Animation
-         * @brief plays animation with name and playback mode, rate, and order
-         * @param String name
-         * @param Number mode
-         * @param Number rate
-         * @param Number order
-         * @return this
-         */
+        * @method play
+        * @memberof Animation
+        * @brief plays animation with name and playback mode, rate, and order
+        * @param String name
+        * @param Number mode
+        * @param Number rate
+        * @param Number order
+        * @return this
+        */
         Animation.prototype.play = function(name, mode, rate, order) {
             if (this.current === name) return this;
 
@@ -270,29 +272,42 @@ define([
         };
 
         /**
-         * @method stop
-         * @memberof Animation
-         * @brief stops animation
-         * @return this
-         */
+        * @method stop
+        * @memberof Animation
+        * @brief stops animation
+        * @return this
+        */
         Animation.prototype.stop = function() {
 
             if (this.playing) this.emit("stop");
             this.playing = false;
-
+			
             return this;
         };
 
         /**
-         * @method getBone
-         * @memberof Animation
-         * @brief returns bone by name
-         * @param String name
-         * @return Bone
-         */
+        * @method getBone
+        * @memberof Animation
+        * @brief returns bone by name
+        * @param String name
+        * @return Bone
+        */
         Animation.prototype.getBone = function(name) {
 
             return this._boneHash[name];
+        };
+
+        /**
+        * @method toJSON
+        * @memberof Animation
+        * @brief returns this as JSON
+        * @return Object
+        */
+        Animation.prototype.toJSON = function() {
+            
+            return {
+                type: this._type,
+            };
         };
 
 

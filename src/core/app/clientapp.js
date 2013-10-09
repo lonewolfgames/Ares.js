@@ -21,15 +21,14 @@ define([
 
         var now = Time.now,
             MIN_DELTA = 0.00001,
-            MAX_DELTA = 0.5,
-            requestAnimationFrame = Dom.requestAnimationFrame;
+            MAX_DELTA = 0.5;
 
         /**
-         * @class ClientApp
-         * @extends App
-         * @brief class for managing client application
-         * @param Object options
-         */
+        * @class ClientApp
+        * @extends App
+        * @brief class for managing client application
+        * @param Object options
+        */
 
         function ClientApp(opts) {
             opts || (opts = Class.OBJECT);
@@ -40,33 +39,50 @@ define([
             this._loop = new Loop(loop, this);
 
             /**
-             * @property Canvas canvas
-             * @memberof ClientApp
-             */
+            * @property Canvas canvas
+            * @memberof ClientApp
+            */
             this.canvas = new Canvas(opts.width, opts.height);
 
             /**
-             * @property WebGLRenderer renderer
-             * @memberof ClientApp
-             */
+            * @property WebGLRenderer renderer
+            * @memberof ClientApp
+            */
             this.renderer = new WebGLRenderer(opts);
 
             /**
-             * @property Scene scene
-             * @memberof ClientApp
-             */
+            * @property Scene scene
+            * @memberof ClientApp
+            */
             this.scene = undefined;
 
             /**
-             * @property Camera(2D) camera
-             * @memberof ClientApp
-             */
+            * @property Camera(2D) camera
+            * @memberof ClientApp
+            */
             this.camera = undefined;
+
+            /**
+            * @property String id
+            * @brief clients socket.io id
+            * @memberof ClientApp
+            */
+            this.id = undefined;
+
+            /**
+            * @property socket socket
+            * @memberof ClientApp
+            */
+            this.socket = undefined;
         }
 
         Class.extend(ClientApp, App);
 
-
+        /**
+        * @method init
+        * @memberof ClientApp
+        * @brief inits the client application
+        */
         ClientApp.prototype.init = function() {
             var canvas = this.canvas;
 
@@ -85,10 +101,44 @@ define([
         };
 
         /**
-         * @method suspend
-         * @memberof ClientApp
-         * @brief suspends game loop
-         */
+        * @method connect
+        * @memberof ClientApp
+        * @brief connects the client application to the server application
+        */
+        ClientApp.prototype.connect = function() {
+            var scope = this,
+                socket;
+            
+            this.socket = socket = io.connect("http://"+ Settings.host, { port: Settings.port });
+            
+            socket.on("server_connection", function(id, assets) {
+                scope.id = id;
+                Assets.fromJSON(assets);
+                
+                socket.emit("client_connect", Device);
+                
+                socket.on("server_connect", function() {
+                    scope.emit("connect");
+                });
+            });
+        };
+
+        /**
+        * @method disconnect
+        * @memberof ClientApp
+        * @brief disconnect the client application from the server application
+        */
+        ClientApp.prototype.disconnect = function() {
+            
+            this.socket && this.socket.disconnect();
+            this.emit("disconnect");
+        };
+
+        /**
+        * @method suspend
+        * @memberof ClientApp
+        * @brief suspends game loop
+        */
         ClientApp.prototype.suspend = function() {
 
             this._loop.suspend();
@@ -96,10 +146,10 @@ define([
         };
 
         /**
-         * @method resume
-         * @memberof ClientApp
-         * @brief resumes game loop
-         */
+        * @method resume
+        * @memberof ClientApp
+        * @brief resumes game loop
+        */
         ClientApp.prototype.resume = function() {
 
             this._loop.resume();
@@ -107,40 +157,39 @@ define([
         };
 
         /**
-         * @method isStarted
-         * @memberof ClientApp
-         * @return Boolean
-         */
+        * @method isStarted
+        * @memberof ClientApp
+        * @return Boolean
+        */
         ClientApp.prototype.isStarted = function() {
 
             return this._loop.isStarted();
         };
 
         /**
-         * @method setScene
-         * @memberof ClientApp
-         * @brief sets active scene
-         * @param Scene scene
-         */
+        * @method setScene
+        * @memberof ClientApp
+        * @brief sets active scene
+        * @param Scene scene
+        */
         ClientApp.prototype.setScene = function(scene) {
             var scenes = this.scenes,
                 index = scenes.indexOf(scene);
 
             if (index > -1) {
                 this.scene = scene;
-                scene.init();
             }
 
             return this;
         };
 
         /**
-         * @method setCamera
-         * @memberof ClientApp
-         * @brief sets active camera from GameObject, must have a Camera(2D) Component
-         * @param GameObject gameObject
-         * @return this
-         */
+        * @method setCamera
+        * @memberof ClientApp
+        * @brief sets active camera from GameObject, must have a Camera(2D) Component
+        * @param GameObject gameObject
+        * @return this
+        */
         ClientApp.prototype.setCamera = function(gameObject) {
             var scene = this.scene,
                 lastCamera = this.camera,

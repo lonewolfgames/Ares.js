@@ -17,11 +17,11 @@ define([
         var EPSILON = Mathf.EPSILON;
 
         /**
-         * @class FlyingCamera
-         * @extends Script
-         * @brief set of controls performs orbiting, zooming, and panning
-         * @param Object options
-         */
+        * @class FlyingCamera
+        * @extends Script
+        * @brief set of controls performs orbiting, zooming, and panning
+        * @param Object options
+        */
 
         function FlyingCamera(opts) {
             opts || (opts = Class.OBJECT);
@@ -29,21 +29,32 @@ define([
             Script.call(this, "FlyingCamera");
 
             /**
-             * @property Number speed
-             * @memberof FlyingCamera
-             */
+            * @property Number speed
+            * @memberof FlyingCamera
+            */
             this.speed = opts.speed > EPSILON ? opts.speed : 3;
 
             /**
-             * @property Number rotateSpeed
-             * @memberof FlyingCamera
-             */
+            * @property Number rotateSpeed
+            * @memberof FlyingCamera
+            */
             this.rotateSpeed = opts.rotateSpeed > EPSILON ? opts.rotateSpeed : 3;
 
             this._velocity = new Vec3;
+        }
 
+        Class.extend(FlyingCamera, Script);
+
+
+        var vec = new Vec3,
+            forward = new Vec3(0, 1, 0);
+        
+        FlyingCamera.prototype.onInit = function() {
             var scope = this,
+                transform = this.transform,
                 moving = false;
+
+            transform.lookAt(vec.vadd(transform.position, forward));
 
             Input.on("mouseup", function(button) {
                 if (button === 0) moving = false;
@@ -64,17 +75,6 @@ define([
                 transform.rotation.rotateY(-x);
                 transform.rotation.rotateX(-y);
             });
-        }
-
-        Class.extend(FlyingCamera, Script);
-
-
-        var vec = new Vec3,
-            forward = new Vec3(0, 1, 0);
-        FlyingCamera.prototype.onInit = function() {
-            var transform = this.transform;
-
-            transform.lookAt(vec.vadd(transform.position, forward));
         };
 
 

@@ -26,11 +26,11 @@ define([
             particlePool = Emitter.PARTICLE_POOL = new ObjectPool(Particle);
 
         /**
-         * @class Emitter
-         * @extends Component
-         * @brief 2d particle emitter
-         * @param Object options
-         */
+        * @class Emitter
+        * @extends Component
+        * @brief 2d particle emitter
+        * @param Object options
+        */
 
         function Emitter(opts) {
             opts || (opts = Class.OBJECT);
@@ -38,133 +38,134 @@ define([
             Component.call(this, "Emitter");
 
             /**
-             * @property Boolean worldSpace
-             * @memberof Emitter
-             */
+            * @property Boolean worldSpace
+            * @memberof Emitter
+            */
             this.worldSpace = opts.worldSpace !== undefined ? opts.worldSpace : true;
 
             /**
-             * @property Number minEmission
-             * @memberof Emitter
-             */
+            * @property Number minEmission
+            * @memberof Emitter
+            */
             this.minEmission = opts.minEmission !== undefined ? opts.minEmission : 1;
 
             /**
-             * @property Number maxEmission
-             * @memberof Emitter
-             */
+            * @property Number maxEmission
+            * @memberof Emitter
+            */
             this.maxEmission = opts.maxEmission !== undefined ? opts.maxEmission : 2;
 
             /**
-             * @property Number minLife
-             * @memberof Emitter
-             */
+            * @property Number minLife
+            * @memberof Emitter
+            */
             this.minLife = opts.minLife !== undefined ? opts.minLife : 1;
 
             /**
-             * @property Number maxLife
-             * @memberof Emitter
-             */
+            * @property Number maxLife
+            * @memberof Emitter
+            */
             this.maxLife = opts.maxLife !== undefined ? opts.maxLife : 2;
 
             /**
-             * @property Number minSize
-             * @memberof Emitter
-             */
+            * @property Number minSize
+            * @memberof Emitter
+            */
             this.minSize = opts.minSize !== undefined ? opts.minSize : 0.1;
 
             /**
-             * @property Number maxSize
-             * @memberof Emitter
-             */
+            * @property Number maxSize
+            * @memberof Emitter
+            */
             this.maxSize = opts.maxSize !== undefined ? opts.maxSize : 0.5;
 
             /**
-             * @property Vec3 angularVelocity
-             * @memberof Emitter
-             */
+            * @property Vec3 angularVelocity
+            * @memberof Emitter
+            */
             this.velocity = opts.velocity !== undefined ? opts.velocity : new Vec3(0, 0, 0);
 
             /**
-             * @property Vec3 randVelocity
-             * @memberof Emitter
-             */
+            * @property Vec3 randVelocity
+            * @memberof Emitter
+            */
             this.randVelocity = opts.randVelocity !== undefined ? opts.randVelocity : new Vec3(1, 1, 1);
 
             /**
-             * @property Number angularVelocity
-             * @memberof Emitter
-             */
+            * @property Number angularVelocity
+            * @memberof Emitter
+            */
             this.angularVelocity = opts.angularVelocity !== undefined ? opts.angularVelocity : 0;
 
             /**
-             * @property Number randAngularVelocity
-             * @memberof Emitter
-             */
+            * @property Number randAngularVelocity
+            * @memberof Emitter
+            */
             this.randAngularVelocity = opts.randAngularVelocity !== undefined ? opts.randAngularVelocity : PI;
 
             /**
-             * @property Boolean randRotation
-             * @memberof Emitter
-             */
+            * @property Boolean randRotation
+            * @memberof Emitter
+            */
             this.randRotation = opts.randRotation !== undefined ? opts.randRotation : true;
 
             /**
-             * @property Number emissionRate
-             * @memberof Emitter
-             */
+            * @property Number emissionRate
+            * @memberof Emitter
+            */
             this.emissionRate = opts.emissionRate !== undefined ? opts.emissionRate : 1 / 60;
 
             /**
-             * @property Color color
-             * @memberof Emitter
-             */
+            * @property Color color
+            * @memberof Emitter
+            */
             this.color = opts.color !== undefined ? opts.color : new Color;
 
             /**
-             * @property Color randColor
-             * @memberof Emitter
-             */
+            * @property Color randColor
+            * @memberof Emitter
+            */
             this.randColor = opts.randColor !== undefined ? opts.randColor : new Color;
 
             /**
-             * @property Number alphaStart
-             * @memberof Emitter
-             */
+            * @property Number alphaStart
+            * @memberof Emitter
+            */
             this.alphaStart = opts.alphaStart !== undefined ? opts.alphaStart : 0;
 
             /**
-             * @property Number time
-             * @memberof Emitter
-             */
+            * @property Number time
+            * @memberof Emitter
+            */
             this.time = opts.time !== undefined ? opts.time : 0;
             this._time = 0;
 
             /**
-             * @property Number duration
-             * @memberof Emitter
-             */
+            * @property Number duration
+            * @memberof Emitter
+            */
             this.duration = opts.duration !== undefined ? opts.duration : 0;
 
             /**
-             * @property Boolean loop
-             * @memberof Emitter
-             */
+            * @property Boolean loop
+            * @memberof Emitter
+            */
             this.loop = opts.loop !== undefined ? opts.loop : true;
 
             /**
-             * @property Boolean playing
-             * @memberof Emitter
-             */
+            * @property Boolean playing
+            * @memberof Emitter
+            */
             this.playing = opts.playing !== undefined ? opts.playing : true;
 
             /**
-             * @property Array particles
-             * @memberof Emitter
-             */
+            * @property Array particles
+            * @memberof Emitter
+            */
             this.particles = [];
         }
 
+		Emitter.name = "Emitter";
         Class.extend(Emitter, Component);
 
 
@@ -204,9 +205,9 @@ define([
         };
 
         /**
-         * @method play
-         * @memberof Emitter
-         */
+        * @method play
+        * @memberof Emitter
+        */
         Emitter.prototype.play = function() {
             if (this.playing) return;
 
@@ -215,11 +216,11 @@ define([
         };
 
         /**
-         * @method spawn
-         * @memberof Emitter
-         * @brief spawns number of particles based on properties
-         * @param Number count
-         */
+        * @method spawn
+        * @memberof Emitter
+        * @brief spawns number of particles based on properties
+        * @param Number count
+        */
         Emitter.prototype.spawn = function(count) {
             var transform = this.gameObject.transform2d,
                 position = transform.position,
@@ -258,7 +259,7 @@ define([
                     col.r += randColor.r * random();
                     col.g += randColor.g * random();
                     col.b += randColor.b * random();
-                    col.check();
+                    col.clamp01();
                 }
 
                 if (worldSpace) {
@@ -337,66 +338,79 @@ define([
             }
         };
 
+        /**
+        * @method toJSON
+        * @memberof Emitter
+        * @brief returns this as JSON
+        * @return Object
+        */
+        Emitter.prototype.toJSON = function() {
+            
+            return {
+                type: this._type
+            };
+        };
+
 
         /**
-         * @class Emitter.Particle
-         * @brief 2d particle
-         */
+        * @class Emitter.Particle
+        * @brief 2d particle
+        */
 
         function Particle() {
 
             /**
-             * @property Number alpha
-             * @memberof Emitter.Particle
-             */
+            * @property Number alpha
+            * @memberof Emitter.Particle
+            */
             this.alpha = 0;
 
             /**
-             * @property Number lifeTime
-             * @memberof Emitter.Particle
-             */
+            * @property Number lifeTime
+            * @memberof Emitter.Particle
+            */
             this.lifeTime = 0;
 
             /**
-             * @property Number life
-             * @memberof Emitter.Particle
-             */
+            * @property Number life
+            * @memberof Emitter.Particle
+            */
             this.life = 1;
 
             /**
-             * @property Number size
-             * @memberof Emitter.Particle
-             */
+            * @property Number size
+            * @memberof Emitter.Particle
+            */
             this.size = 1;
 
             /**
-             * @property Color color
-             * @memberof Emitter.Particle
-             */
+            * @property Color color
+            * @memberof Emitter.Particle
+            */
             this.color = new Color;
 
             /**
-             * @property Vec3 position
-             * @memberof Emitter.Particle
-             */
+            * @property Vec3 position
+            * @memberof Emitter.Particle
+            */
             this.position = new Vec3;
 
             /**
-             * @property Vec3 velocity
-             * @memberof Emitter.Particle
-             */
+            * @property Vec3 velocity
+            * @memberof Emitter.Particle
+            */
             this.velocity = new Vec3;
 
             /**
-             * @property Number rotation
-             * @memberof Emitter.Particle
-             */
+            * @property Number rotation
+            * @memberof Emitter.Particle
+            */
             this.rotation = 0;
 
             /**
-             * @property Number angularVelocity
-             * @memberof Emitter.Particle
-             */
+            * @property Number angularVelocity
+            * @memberof Emitter.Particle
+            */
             this.angularVelocity = 0;
 
         }

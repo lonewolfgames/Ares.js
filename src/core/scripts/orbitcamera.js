@@ -29,11 +29,11 @@ define([
             EPSILON = Mathf.EPSILON;
 
         /**
-         * @class OrbitCamera
-         * @extends Script
-         * @brief set of controls performs orbiting, zooming, and panning
-         * @param Object options
-         */
+        * @class OrbitCamera
+        * @extends Script
+        * @brief set of controls performs orbiting, zooming, and panning
+        * @param Object options
+        */
 
         function OrbitCamera(opts) {
             opts || (opts = Class.OBJECT);
@@ -41,39 +41,39 @@ define([
             Script.call(this, "OrbitCamera");
 
             /**
-             * @property Number speed
-             * @memberof OrbitCamera
-             */
+            * @property Number speed
+            * @memberof OrbitCamera
+            */
             this.speed = opts.speed > EPSILON ? opts.speed : 1;
 
             /**
-             * @property Number zoomSpeed
-             * @memberof OrbitCamera
-             */
+            * @property Number zoomSpeed
+            * @memberof OrbitCamera
+            */
             this.zoomSpeed = opts.zoomSpeed > EPSILON ? opts.zoomSpeed : 2;
 
             /**
-             * @property Boolean allowZoom
-             * @memberof OrbitCamera
-             */
+            * @property Boolean allowZoom
+            * @memberof OrbitCamera
+            */
             this.allowZoom = opts.allowZoom !== undefined ? !! opts.allowZoom : true;
 
             /**
-             * @property Boolean allowPan
-             * @memberof OrbitCamera
-             */
+            * @property Boolean allowPan
+            * @memberof OrbitCamera
+            */
             this.allowPan = opts.allowPan !== undefined ? !! opts.allowPan : true;
 
             /**
-             * @property Boolean allowRotate
-             * @memberof OrbitCamera
-             */
+            * @property Boolean allowRotate
+            * @memberof OrbitCamera
+            */
             this.allowRotate = opts.allowRotate !== undefined ? !! opts.allowRotate : true;
 
             /**
-             * @property Vec3 target
-             * @memberof OrbitCamera
-             */
+            * @property Vec3 target
+            * @memberof OrbitCamera
+            */
             this.target = opts.target || new Vec3;
 
             this._offset = new Vec3;
@@ -81,56 +81,6 @@ define([
             this._scale = 1;
             this._thetaDelta = 0;
             this._phiDelta = 0;
-
-            var scope = this,
-                state = NONE;
-
-            Input.on("mouseup", function(button) {
-
-                state = NONE;
-            });
-
-            Input.on("mousedown", function(button) {
-
-                if (button === 0 && scope.allowRotate) {
-                    state = ROTATE;
-                } else if (button === 1 && scope.allowPan) {
-                    state = PAN;
-                }
-            });
-
-            Input.on("mousemove", function(button) {
-                var update = false,
-                    mouseDelta = Input.mouseDelta;
-
-                if (state === ROTATE) {
-                    update = true;
-
-                    scope._thetaDelta += 2 * PI * mouseDelta.x / Input.width * scope.speed;
-                    scope._phiDelta -= 2 * PI * mouseDelta.y / Input.height * scope.speed;
-                } else if (state === PAN) {
-                    update = true;
-
-                    scope.pan(mouseDelta);
-                }
-
-                update && scope._update();
-            });
-
-            Input.on("mousewheel", function(mouseWheel) {
-                if (!scope.allowZoom) return;
-                var update = false;
-
-                if (mouseWheel > 0) {
-                    update = true;
-                    scope._scale *= pow(0.95, scope.zoomSpeed);
-                } else {
-                    update = true;
-                    scope._scale /= pow(0.95, scope.zoomSpeed);
-                }
-
-                update && scope._update();
-            });
         }
 
         Class.extend(OrbitCamera, Script);
@@ -204,7 +154,56 @@ define([
         };
 
         OrbitCamera.prototype.onInit = function() {
+            var scope = this,
+                state = NONE;
 
+            Input.on("mouseup", function(button) {
+
+                state = NONE;
+            });
+
+            Input.on("mousedown", function(button) {
+
+                if (button === 0 && scope.allowRotate) {
+                    state = ROTATE;
+                } else if (button === 1 && scope.allowPan) {
+                    state = PAN;
+                }
+            });
+
+            Input.on("mousemove", function(button) {
+                var update = false,
+                    mouseDelta = Input.mouseDelta;
+
+                if (state === ROTATE) {
+                    update = true;
+
+                    scope._thetaDelta += 2 * PI * mouseDelta.x / Input.width * scope.speed;
+                    scope._phiDelta -= 2 * PI * mouseDelta.y / Input.height * scope.speed;
+                } else if (state === PAN) {
+                    update = true;
+
+                    scope.pan(mouseDelta);
+                }
+
+                update && scope._update();
+            });
+
+            Input.on("mousewheel", function(mouseWheel) {
+                if (!scope.allowZoom) return;
+                var update = false;
+
+                if (mouseWheel > 0) {
+                    update = true;
+                    scope._scale *= pow(0.95, scope.zoomSpeed);
+                } else {
+                    update = true;
+                    scope._scale /= pow(0.95, scope.zoomSpeed);
+                }
+
+                update && scope._update();
+            });
+            
             this._update();
         };
 

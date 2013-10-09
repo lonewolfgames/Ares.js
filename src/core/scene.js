@@ -11,11 +11,11 @@ define([
 
 
         /**
-         * @class Scene
-         * @extends Class
-         * @brief base class for managing GameObjects
-         * @param Object options
-         */
+        * @class Scene
+        * @extends Class
+        * @brief base class for managing GameObjects
+        * @param Object options
+        */
 
         function Scene(opts) {
             opts || (opts = Class.OBJECT);
@@ -23,36 +23,36 @@ define([
             Class.call(this);
 
             /**
-             * @property Number _serverId
-             * @memberof Scene
-             */
+            * @property Number _serverId
+            * @memberof Scene
+            */
             this._serverId = -1;
 
             /**
-             * @property String name
-             * @memberof Scene
-             */
+            * @property String name
+            * @memberof Scene
+            */
             this.name = opts.name !== undefined ? opts.name : "Scene-" + this._id;
 
             /**
-             * @property App app
-             * @memberof Scene
-             */
+            * @property App app
+            * @memberof Scene
+            */
             this.app = undefined;
 
             /**
-             * @property Array gameObjects
-             * @memberof Scene
-             */
+            * @property Array gameObjects
+            * @memberof Scene
+            */
             this.gameObjects = [];
             this._gameObjectHash = {};
             this._gameObjectHashServer = {};
             this._gameObjectNameHash = {};
 
             /**
-             * @property Array components
-             * @memberof Scene
-             */
+            * @property Array components
+            * @memberof Scene
+            */
             this.components = {};
             this._componentHash = {};
             this._componentHashServer = {};
@@ -77,10 +77,10 @@ define([
         };
 
         /**
-         * @method init
-         * @memberof Scene
-         * @brief inits all GameObjects attached to Scene
-         */
+        * @method init
+        * @memberof Scene
+        * @brief inits all GameObjects attached to Scene
+        */
         Scene.prototype.init = function() {
             var gameObjects = this.gameObjects,
                 components = this.components,
@@ -98,10 +98,10 @@ define([
         };
 
         /**
-         * @method update
-         * @memberof Scene
-         * @brief updates all Components attached to Scene
-         */
+        * @method update
+        * @memberof Scene
+        * @brief updates all Components attached to Scene
+        */
         Scene.prototype.update = function() {
             var gameObjects = this.gameObjects,
                 components = this.components,
@@ -119,11 +119,11 @@ define([
         };
 
         /**
-         * @method clear
-         * @memberof Scene
-         * @brief clears Scene
-         * @return this
-         */
+        * @method clear
+        * @memberof Scene
+        * @brief clears Scene
+        * @return this
+        */
         Scene.prototype.clear = function() {
             var gameObjects = this.gameObjects,
                 i;
@@ -134,11 +134,11 @@ define([
         };
 
         /**
-         * @method destroy
-         * @memberof Scene
-         * @brief destroys Scene and all GameObjects
-         * @return this
-         */
+        * @method destroy
+        * @memberof Scene
+        * @brief destroys Scene and all GameObjects
+        * @return this
+        */
         Scene.prototype.destroy = function() {
             if (!this.app) {
                 console.warn("Scene.destroy: can\'t destroy Scene if it\'s not added to an App");
@@ -157,12 +157,12 @@ define([
         };
 
         /**
-         * @method addGameObject
-         * @memberof Scene
-         * @brief adds GameObject to Scene
-         * @param GameObject gameObject
-         * @return this
-         */
+        * @method addGameObject
+        * @memberof Scene
+        * @brief adds GameObject to Scene
+        * @param GameObject gameObject
+        * @return this
+        */
         Scene.prototype.addGameObject = function(gameObject) {
             if (!(gameObject instanceof GameObject)) {
                 console.warn("Scene.addGameObject: can\'t add passed argument, it is not instance of GameObject");
@@ -204,11 +204,11 @@ define([
         };
 
         /**
-         * @method addGameObjects
-         * @memberof Scene
-         * @brief adds all GameObjects in arguments to Scene
-         * @return this
-         */
+        * @method addGameObjects
+        * @memberof Scene
+        * @brief adds all GameObjects in arguments to Scene
+        * @return this
+        */
         Scene.prototype.addGameObjects = function() {
 
             for (var i = arguments.length; i--;) this.addGameObject(arguments[i]);
@@ -217,19 +217,19 @@ define([
         };
 
         /**
-         * @method add
-         * @memberof Scene
-         * @brief same as addGameObjects
-         */
+        * @method add
+        * @memberof Scene
+        * @brief same as addGameObjects
+        */
         Scene.prototype.add = Scene.prototype.addGameObjects;
 
         /**
-         * @method removeGameObject
-         * @memberof Scene
-         * @brief removes GameObject from Scene
-         * @param GameObject gameObject
-         * @return this
-         */
+        * @method removeGameObject
+        * @memberof Scene
+        * @brief removes GameObject from Scene
+        * @param GameObject gameObject
+        * @return this
+        */
         Scene.prototype.removeGameObject = function(gameObject) {
             if (!(gameObject instanceof GameObject)) {
                 console.warn("Scene.removeGameObject: can\'t remove passed argument, it is not instance of GameObject");
@@ -268,11 +268,11 @@ define([
         };
 
         /**
-         * @method removeGameObjects
-         * @memberof Scene
-         * @brief removes all GameObjects in arguments from Scene
-         * @return this
-         */
+        * @method removeGameObjects
+        * @memberof Scene
+        * @brief removes all GameObjects in arguments from Scene
+        * @return this
+        */
         Scene.prototype.removeGameObjects = function() {
 
             for (var i = arguments.length; i--;) this.removeGameObject(arguments[i]);
@@ -281,10 +281,10 @@ define([
         };
 
         /**
-         * @method remove
-         * @memberof Scene
-         * @brief same as removeGameObjects
-         */
+        * @method remove
+        * @memberof Scene
+        * @brief same as removeGameObjects
+        */
         Scene.prototype.remove = Scene.prototype.removeGameObjects;
 
 
@@ -300,9 +300,9 @@ define([
             types.push(component);
             types.sort(component.sort);
 
-            this.emit("add" + type, component);
-
             if (this.app) component.init();
+
+            this.emit("add" + type, component);
         };
 
 
@@ -323,63 +323,109 @@ define([
         };
 
         /**
-         * @method getGameObjectByName
-         * @memberof Scene
-         * @brief returns GameObject by name
-         * @param String name
-         * @return GameObject
-         */
+        * @method getGameObjectByName
+        * @memberof Scene
+        * @brief returns GameObject by name
+        * @param String name
+        * @return GameObject
+        */
         Scene.prototype.getGameObjectByName = function(name) {
 
             return this._gameObjectNameHash[name];
         };
 
         /**
-         * @method getGameObjectById
-         * @memberof Scene
-         * @brief returns GameObject by id
-         * @param Number id
-         * @return GameObject
-         */
+        * @method getGameObjectById
+        * @memberof Scene
+        * @brief returns GameObject by id
+        * @param Number id
+        * @return GameObject
+        */
         Scene.prototype.getGameObjectById = function(id) {
 
             return this._gameObjectHash[id];
         };
 
         /**
-         * @method getGameObjectByServerId
-         * @memberof Scene
-         * @brief returns GameObject by server id
-         * @param Number id
-         * @return GameObject
-         */
+        * @method getGameObjectByServerId
+        * @memberof Scene
+        * @brief returns GameObject by server id
+        * @param Number id
+        * @return GameObject
+        */
         Scene.prototype.getGameObjectByServerId = function(id) {
 
             return this._gameObjectHashServer[id];
         };
 
         /**
-         * @method getComponentById
-         * @memberof Scene
-         * @brief returns Component by id
-         * @param Number id
-         * @return Component
-         */
+        * @method getComponentById
+        * @memberof Scene
+        * @brief returns Component by id
+        * @param Number id
+        * @return Component
+        */
         Scene.prototype.getComponentById = function(id) {
 
             return this._componentHash[id];
         };
 
         /**
-         * @method getComponentByServerId
-         * @memberof Scene
-         * @brief returns Component by server id
-         * @param Number id
-         * @return Component
-         */
+        * @method getComponentByServerId
+        * @memberof Scene
+        * @brief returns Component by server id
+        * @param Number id
+        * @return Component
+        */
         Scene.prototype.getComponentByServerId = function(id) {
 
             return this._componentHashServer[id];
+        };
+
+        /**
+        * @method toJSON
+        * @memberof Scene
+        * @brief returns this as JSON
+        * @return Object
+        */
+        Scene.prototype.toJSON = function() {
+            var gameObjects = [],
+                thisGameObjects = this.gameObjects,
+                gameObject,
+                i;
+            
+            for (i in thisGameObjects) {
+                gameObject = thisGameObjects[i];
+                
+                if (gameObject) gameObjects.push( gameObject.toJSON() );
+            }
+            
+            return {
+                type: "Scene",
+                name: this.name,
+                gameObjects: gameObjects
+            };
+        };
+
+        /**
+        * @method fromJSON
+        * @memberof Scene
+        * @brief returns this from JSON object
+        * @param Object json
+        * @return this
+        */
+        Scene.prototype.fromJSON = function( json ) {
+            var gameObjects = json.gameObjects,
+                thisGameObjects = this.gameObjects,
+                gameObject,
+                i;
+            
+            for (i in gameObjects) {
+                gameObject = gameObjects[i];
+                if (gameObject) this.addGameObject(new GameObject().fromJSON(gameObject));
+            }
+            
+            return this;
         };
 
 

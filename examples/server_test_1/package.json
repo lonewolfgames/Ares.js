@@ -1,0 +1,23 @@
+{
+  "name": "test",
+  "version": "0.0.1",
+  "description": "Node.js WebGL Javascript Game Framework",
+  "main": "./server.js",
+  "keywords": [
+    "ares.js",
+    "ares",
+    "webgl",
+    "2d",
+    "3d",
+    "canvas",
+    "game",
+    "engine",
+    "game engine"
+  ],
+  "author": "Nathan Faucett",
+  "license": "BSD",
+  "dependencies": {
+	"requirejs": "~2.1.5",
+    "socket.io": "~0.9.14"
+  }
+}

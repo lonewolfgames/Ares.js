@@ -18,11 +18,11 @@ define([
             degsToRads = Mathf.degsToRads;
 
         /**
-         * @class Camera
-         * @extends Component
-         * @brief camera is a device through which the player views the world
-         * @param Object options
-         */
+        * @class Camera
+        * @extends Component
+        * @brief camera is a device through which the player views the world
+        * @param Object options
+        */
 
         function Camera(opts) {
             opts || (opts = Class.OBJECT);
@@ -30,75 +30,75 @@ define([
             Component.call(this, "Camera");
 
             /**
-             * @property Color backgroundColor
-             * @memberof Camera
-             */
+            * @property Color backgroundColor
+            * @memberof Camera
+            */
             this.backgroundColor = opts.backgroundColor !== undefined ? opts.backgroundColor : new Color(0.5, 0.5, 0.5);
 
             /**
-             * @property Number width
-             * @brief client's screen width
-             * @memberof Camera
-             */
+            * @property Number width
+            * @brief client's screen width
+            * @memberof Camera
+            */
             this.width = 960;
 
             /**
-             * @property Number height
-             * @brief client's screen height
-             * @memberof Camera
-             */
+            * @property Number height
+            * @brief client's screen height
+            * @memberof Camera
+            */
             this.height = 640;
 
             /**
-             * @property Number aspect
-             * @brief client's screen aspect
-             * @memberof Camera
-             */
+            * @property Number aspect
+            * @brief client's screen aspect
+            * @memberof Camera
+            */
             this.aspect = this.width / this.height;
 
             /**
-             * @property Number fov
-             * @memberof Camera
-             */
+            * @property Number fov
+            * @memberof Camera
+            */
             this.fov = opts.fov !== undefined ? opts.fov : 35;
 
             /**
-             * @property Number near
-             * @memberof Camera
-             */
+            * @property Number near
+            * @memberof Camera
+            */
             this.near = opts.near !== undefined ? opts.near : 0.1;
 
             /**
-             * @property Number far
-             * @memberof Camera
-             */
+            * @property Number far
+            * @memberof Camera
+            */
             this.far = opts.far !== undefined ? opts.far : 512;
 
             /**
-             * @property Boolean orthographic
-             * @memberof Camera
-             */
+            * @property Boolean orthographic
+            * @memberof Camera
+            */
             this.orthographic = opts.orthographic !== undefined ? !! opts.orthographic : false;
 
             /**
-             * @property Number orthographicSize
-             * @brief half size of camera
-             * @memberof Camera
-             */
+            * @property Number orthographicSize
+            * @brief half size of camera
+            * @memberof Camera
+            */
             this.orthographicSize = opts.orthographicSize !== undefined ? opts.orthographicSize : 2;
 
             /**
-             * @property Number minOrthographicSize
-             * @brief min half size of camera
-             * @memberof Camera
-             */
+            * @property Number minOrthographicSize
+            * @brief min half size of camera
+            * @memberof Camera
+            */
             this.minOrthographicSize = opts.minOrthographicSize !== undefined ? opts.minOrthographicSize : 0.01;
 
             /**
-             * @property Number maxOrthographicSize
-             * @brief max half size of camera
-             * @memberof Camera
-             */
+            * @property Number maxOrthographicSize
+            * @brief max half size of camera
+            * @memberof Camera
+            */
             this.maxOrthographicSize = opts.maxOrthographicSize !== undefined ? opts.maxOrthographicSize : Infinity;
 
             this.projection = new Mat4;
@@ -107,7 +107,8 @@ define([
             this._needsUpdate = true;
             this._active = false;
         }
-
+        
+		Camera.name = "Camera";
         Class.extend(Camera, Component);
 
 
@@ -133,11 +134,11 @@ define([
         };
 
         /**
-         * @method set
-         * @memberof Camera
-         * @param Number width
-         * @param Number height
-         */
+        * @method set
+        * @memberof Camera
+        * @param Number width
+        * @param Number height
+        */
         Camera.prototype.set = function(width, height) {
 
             this.width = width;
@@ -147,10 +148,10 @@ define([
         };
 
         /**
-         * @method setWidth
-         * @memberof Camera
-         * @param Number width
-         */
+        * @method setWidth
+        * @memberof Camera
+        * @param Number width
+        */
         Camera.prototype.setWidth = function(width) {
 
             this.width = width;
@@ -159,10 +160,10 @@ define([
         };
 
         /**
-         * @method setHeight
-         * @memberof Camera
-         * @param Number height
-         */
+        * @method setHeight
+        * @memberof Camera
+        * @param Number height
+        */
         Camera.prototype.setHeight = function(height) {
 
             this.height = height;
@@ -171,10 +172,10 @@ define([
         };
 
         /**
-         * @method setFov
-         * @memberof Camera
-         * @param Number value
-         */
+        * @method setFov
+        * @memberof Camera
+        * @param Number value
+        */
         Camera.prototype.setFov = function(value) {
 
             this.fov = value;
@@ -182,10 +183,10 @@ define([
         };
 
         /**
-         * @method setNear
-         * @memberof Camera
-         * @param Number value
-         */
+        * @method setNear
+        * @memberof Camera
+        * @param Number value
+        */
         Camera.prototype.setNear = function(value) {
 
             this.near = value;
@@ -193,10 +194,10 @@ define([
         };
 
         /**
-         * @method setFar
-         * @memberof Camera
-         * @param Number value
-         */
+        * @method setFar
+        * @memberof Camera
+        * @param Number value
+        */
         Camera.prototype.setFar = function(value) {
 
             this.far = value;
@@ -204,10 +205,10 @@ define([
         };
 
         /**
-         * @method setOrthographic
-         * @memberof Camera
-         * @param Boolean value
-         */
+        * @method setOrthographic
+        * @memberof Camera
+        * @param Boolean value
+        */
         Camera.prototype.setOrthographic = function(value) {
 
             this.orthographic = !! value;
@@ -215,9 +216,9 @@ define([
         };
 
         /**
-         * @method toggleOrthographic
-         * @memberof Camera
-         */
+        * @method toggleOrthographic
+        * @memberof Camera
+        */
         Camera.prototype.toggleOrthographic = function() {
 
             this.orthographic = !this.orthographic;
@@ -225,11 +226,11 @@ define([
         };
 
         /**
-         * @method setOrthographicSize
-         * @memberof Camera
-         * @brief set half size of camera
-         * @param Number size
-         */
+        * @method setOrthographicSize
+        * @memberof Camera
+        * @brief set half size of camera
+        * @param Number size
+        */
         Camera.prototype.setOrthographicSize = function(size) {
 
             this.orthographicSize = clamp(size, this.minOrthographicSize, this.maxOrthographicSize);
@@ -240,13 +241,13 @@ define([
         var MAT4 = new Mat4,
             VEC3 = new Vec3;
         /**
-         * @method toWorld
-         * @memberof Camera
-         * @brief converts screen point to world space
-         * @param Vec2 v
-         * @param Vec3 out
-         * @return Vec3
-         */
+        * @method toWorld
+        * @memberof Camera
+        * @brief converts screen point to world space
+        * @param Vec2 v
+        * @param Vec3 out
+        * @return Vec3
+        */
         Camera.prototype.toWorld = function(v, out) {
             out || (out = new Vec3);
 
@@ -259,13 +260,13 @@ define([
         };
 
         /**
-         * @method toScreen
-         * @memberof Camera
-         * @brief converts world point to screen space
-         * @param Vec3 v
-         * @param Vec2 out
-         * @return Vec3
-         */
+        * @method toScreen
+        * @memberof Camera
+        * @brief converts world point to screen space
+        * @param Vec3 v
+        * @param Vec2 out
+        * @return Vec3
+        */
         Camera.prototype.toScreen = function(v, out) {
             out || (out = new Vec2);
 
@@ -303,6 +304,54 @@ define([
             }
 
             this.view.inverseMat(this.transform.matrixWorld);
+        };
+
+        /**
+        * @method toJSON
+        * @memberof Camera
+        * @brief returns this as JSON
+        * @return Object
+        */
+        Camera.prototype.toJSON = function() {
+            
+            return {
+                type: this._type,
+                backgroundColor: this.backgroundColor.toJSON(),
+                aspect: this.aspect,
+                width: this.width,
+                height: this.height,
+                fov: this.fov,
+                far: this.far,
+                near: this.near,
+                orthographic: this.orthographic,
+                orthographicSize: this.orthographicSize,
+            };
+        };
+
+        /**
+        * @method fromJSON
+        * @memberof Camera
+        * @brief returns this from JSON object
+        * @param Object json
+        * @return this
+        */
+        Camera.prototype.fromJSON = function(json) {
+            
+            this.backgroundColor.fromJSON(json.backgroundColor);
+            this.width = json.width;
+            this.height = json.height;
+            this.aspect = json.aspect;
+
+            this.far = json.far;
+            this.near = json.near;
+            this.fov = json.fov;
+
+            this.orthographic = json.orthographic;
+            this.orthographicSize = json.orthographicSize;
+            this.minOrthographicSize = json.minOrthographicSize;
+            this.maxOrthographicSize = json.maxOrthographicSize;
+            
+            return this;
         };
 
 

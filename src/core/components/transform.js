@@ -16,11 +16,11 @@ define([
         var EPSILON = Mathf.EPSILON;
 
         /**
-         * @class Transform
-         * @extends Class
-         * @brief position, rotation, and scale
-         * @param Object options
-         */
+        * @class Transform
+        * @extends Class
+        * @brief position, rotation, and scale
+        * @param Object options
+        */
 
         function Transform(opts) {
             opts || (opts = Class.OBJECT);
@@ -28,67 +28,68 @@ define([
             Component.call(this, "Transform");
 
             /**
-             * @property Transform root
-             * @memberof Transform
-             */
+            * @property Transform root
+            * @memberof Transform
+            */
             this.root = this;
 
             /**
-             * @property Number depth
-             * @memberof Transform
-             */
+            * @property Number depth
+            * @memberof Transform
+            */
             this.depth = 0;
 
             /**
-             * @property Transform parent
-             * @memberof Transform
-             */
+            * @property Transform parent
+            * @memberof Transform
+            */
             this.parent = undefined;
 
             /**
-             * @property Array children
-             * @memberof Transform
-             */
+            * @property Array children
+            * @memberof Transform
+            */
             this.children = [];
 
             /**
-             * @property Vec3 position
-             * @memberof Transform
-             */
+            * @property Vec3 position
+            * @memberof Transform
+            */
             this.position = opts.position !== undefined ? opts.position : new Vec3;
 
             /**
-             * @property Number rotation
-             * @memberof Transform
-             */
+            * @property Number rotation
+            * @memberof Transform
+            */
             this.rotation = opts.rotation !== undefined ? opts.rotation : new Quat;
 
             /**
-             * @property Vec3 scale
-             * @memberof Transform
-             */
+            * @property Vec3 scale
+            * @memberof Transform
+            */
             this.scale = opts.scale !== undefined ? opts.scale : new Vec3(1, 1, 1);
 
             /**
-             * @property Mat4 matrix
-             * @memberof Transform
-             */
+            * @property Mat4 matrix
+            * @memberof Transform
+            */
             this.matrix = new Mat4;
 
             /**
-             * @property Mat4 matrixWorld
-             * @memberof Transform
-             */
+            * @property Mat4 matrixWorld
+            * @memberof Transform
+            */
             this.matrixWorld = new Mat4;
 
             /**
-             * @property Mat4 modelView
-             * @memberof Transform
-             */
+            * @property Mat4 modelView
+            * @memberof Transform
+            */
             this.modelView = new Mat4;
             this._modelViewNeedsUpdate = false;
         }
-
+        
+        Transform.name = "Transform";
         Class.extend(Transform, Component);
 
 
@@ -102,7 +103,7 @@ define([
             this.rotation.copy(other.rotation);
             this.root = other.root;
 
-            for (i = children.length; i--;) this.add(children[i].clone());
+            for (i = children.length; i--;) this.add(children[i].gameObject.clone().transform);
 
             if (other.parent) other.parent.add(this);
 
@@ -110,14 +111,14 @@ define([
         };
 
         /**
-         * @method translate
-         * @memberof Transform
-         * @brief translates this by translation along relativeTo's rotation
-         * @param Vec3 translation
-         * @param Transform translation
-         * @param Transform relativeTo
-         * @return this
-         */
+        * @method translate
+        * @memberof Transform
+        * @brief translates this by translation along relativeTo's rotation
+        * @param Vec3 translation
+        * @param Transform translation
+        * @param Transform relativeTo
+        * @return this
+        */
         Transform.prototype.translate = function() {
             var vec = new Vec3;
 
@@ -137,13 +138,13 @@ define([
         }();
 
         /**
-         * @method rotate
-         * @memberof Transform
-         * @brief rotates this by rotation relative to relativeTo's rotation
-         * @param Vec3 rotation
-         * @param Transform relativeTo
-         * @return this
-         */
+        * @method rotate
+        * @memberof Transform
+        * @brief rotates this by rotation relative to relativeTo's rotation
+        * @param Vec3 rotation
+        * @param Transform relativeTo
+        * @return this
+        */
         Transform.prototype.rotate = function() {
             var vec = new Vec3;
 
@@ -163,13 +164,13 @@ define([
         }();
 
         /**
-         * @method lookAt
-         * @memberof Transform
-         * @brief makes this look at a transform
-         * @param Transform target
-         * @param Vec3 up
-         * @return this
-         */
+        * @method lookAt
+        * @memberof Transform
+        * @brief makes this look at a transform
+        * @param Transform target
+        * @param Vec3 up
+        * @return this
+        */
         Transform.prototype.lookAt = function() {
             var mat = new Mat4,
                 vec = new Vec3,
@@ -192,13 +193,13 @@ define([
         }();
 
         /**
-         * @method follow
-         * @memberof Transform
-         * @brief makes this follow a transform
-         * @param Transform transform
-         * @param Number speed
-         * @return this
-         */
+        * @method follow
+        * @memberof Transform
+        * @brief makes this follow a transform
+        * @param Transform transform
+        * @param Number speed
+        * @return this
+        */
         Transform.prototype.follow = function() {
             var target = new Vec3,
                 position = new Vec3,
@@ -217,11 +218,11 @@ define([
         }();
 
         /**
-         * @method addChild
-         * @memberof Transform
-         * @brief add transform to this transforms children
-         * @return this
-         */
+        * @method addChild
+        * @memberof Transform
+        * @brief add transform to this transforms children
+        * @return this
+        */
         Transform.prototype.addChild = function(child) {
             if (!(child instanceof Transform)) {
                 console.warn("Transform.add: can\'t add passed argument, it is not instance of Transform");
@@ -256,11 +257,11 @@ define([
         };
 
         /**
-         * @method addChildren
-         * @memberof Transform
-         * @brief adds all transforms in arguments to this transforms children
-         * @return this
-         */
+        * @method addChildren
+        * @memberof Transform
+        * @brief adds all transforms in arguments to this transforms children
+        * @return this
+        */
         Transform.prototype.addChildren = function() {
 
             for (var i = arguments.length; i--;) this.addChild(arguments[i]);
@@ -269,19 +270,19 @@ define([
         };
 
         /**
-         * @method add
-         * @memberof Transform
-         * @brief same as addChildren
-         * @return this
-         */
+        * @method add
+        * @memberof Transform
+        * @brief same as addChildren
+        * @return this
+        */
         Transform.prototype.add = Transform.prototype.addChildren;
 
         /**
-         * @method removeChild
-         * @memberof Transform
-         * @brief remove transform from this transforms children
-         * @return this
-         */
+        * @method removeChild
+        * @memberof Transform
+        * @brief remove transform from this transforms children
+        * @return this
+        */
         Transform.prototype.removeChild = function(child) {
             var children = this.children,
                 index = children.indexOf(child),
@@ -310,11 +311,11 @@ define([
         };
 
         /**
-         * @method removeChildren
-         * @memberof Transform
-         * @brief removes all transforms in arguments from this transforms children
-         * @return this
-         */
+        * @method removeChildren
+        * @memberof Transform
+        * @brief removes all transforms in arguments from this transforms children
+        * @return this
+        */
         Transform.prototype.removeChildren = function() {
 
             for (var i = arguments.length; i--;) this.removeChild(arguments[i]);
@@ -323,19 +324,19 @@ define([
         };
 
         /**
-         * @method remove
-         * @memberof Transform
-         * @brief same as removeChildren
-         * @return this
-         */
+        * @method remove
+        * @memberof Transform
+        * @brief same as removeChildren
+        * @return this
+        */
         Transform.prototype.remove = Transform.prototype.removeChildren;
 
         /**
-         * @method detachChildren
-         * @memberof Transform
-         * @brief removes all children from this transforms children
-         * @return this
-         */
+        * @method detachChildren
+        * @memberof Transform
+        * @brief removes all children from this transforms children
+        * @return this
+        */
         Transform.prototype.detachChildren = function() {
             var children = this.children,
                 i;
@@ -346,24 +347,24 @@ define([
         };
 
         /**
-         * @method toWorld
-         * @memberof Transform
-         * @brief returns vector in this Transform's world space
-         * @param Vec3 v
-         * @return Vec3
-         */
+        * @method toWorld
+        * @memberof Transform
+        * @brief returns vector in this Transform's world space
+        * @param Vec3 v
+        * @return Vec3
+        */
         Transform.prototype.toWorld = function(v) {
 
             return v.transformMat4(this.matrixWorld);
         };
 
         /**
-         * @method toWorld
-         * @memberof Transform
-         * @brief returns vector in this Transform's local space
-         * @param Vec3 v
-         * @return Vec3
-         */
+        * @method toWorld
+        * @memberof Transform
+        * @brief returns vector in this Transform's local space
+        * @param Vec3 v
+        * @return Vec3
+        */
         Transform.prototype.toLocal = function() {
             var mat = new Mat4;
 
@@ -374,11 +375,11 @@ define([
         }();
 
         /**
-         * @method update
-         * @memberof Transform
-         * @brief updates world and local matrix
-         * @return this
-         */
+        * @method update
+        * @memberof Transform
+        * @brief updates world and local matrix
+        * @return this
+        */
         Transform.prototype.update = function() {
             var matrix = this.matrix,
                 parent = this.parent;
@@ -406,6 +407,41 @@ define([
         Transform.prototype.sort = function(a, b) {
 
             return b.depth - a.depth;
+        };
+
+        /**
+        * @method toJSON
+        * @memberof Transform
+        * @brief returns this as JSON
+        * @return Object
+        */
+        Transform.prototype.toJSON = function() {
+            var parent = this.parent,
+                parentId = parent ? parent.id : -1;
+            
+            return {
+                type: this._type,
+                parent: parentId,
+                position: this.position.toJSON(),
+                scale: this.scale.toJSON(),
+                rotation: this.rotation.toJSON()
+            };
+        };
+
+        /**
+        * @method fromJSON
+        * @memberof Transform
+        * @brief returns this from JSON object
+        * @param Object json
+        * @return this
+        */
+        Transform.prototype.fromJSON = function(json) {
+            
+            this.position.fromJSON(json.position);
+            this.scale.fromJSON(json.scale);
+            this.rotation.fromJSON(json.rotation);
+            
+            return this;
         };
 
 

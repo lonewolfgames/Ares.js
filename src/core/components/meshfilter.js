@@ -11,11 +11,11 @@ define([
 
 
         /**
-         * @class MeshFilter
-         * @extends Component
-         * @brief base class for handling meshes
-         * @param Object options
-         */
+        * @class MeshFilter
+        * @extends Component
+        * @brief base class for handling meshes
+        * @param Object options
+        */
 
         function MeshFilter(opts) {
             opts || (opts = Class.OBJECT);
@@ -23,30 +23,31 @@ define([
             Component.call(this, "MeshFilter");
 
             /**
-             * @property Boolean castShadows
-             * @memberof MeshFilter
-             */
+            * @property Boolean castShadows
+            * @memberof MeshFilter
+            */
             this.castShadows = opts.castShadows !== undefined ? !! opts.castShadows : true;
 
             /**
-             * @property Boolean receiveShadows
-             * @memberof MeshFilter
-             */
+            * @property Boolean receiveShadows
+            * @memberof MeshFilter
+            */
             this.receiveShadows = opts.receiveShadows !== undefined ? !! opts.receiveShadows : true;
 
             /**
-             * @property Mesh mesh
-             * @memberof MeshFilter
-             */
+            * @property Mesh mesh
+            * @memberof MeshFilter
+            */
             this.mesh = opts.mesh;
 
             /**
-             * @property Material material
-             * @memberof MeshFilter
-             */
+            * @property Material material
+            * @memberof MeshFilter
+            */
             this.material = opts.material !== undefined ? opts.material : new Material;
         }
 
+		MeshFilter.name = "MeshFilter";
         Class.extend(MeshFilter, Component);
 
 
@@ -58,6 +59,41 @@ define([
             this.mesh = other.mesh;
             this.material.copy(other.material);
 
+            return this;
+        };
+
+        /**
+        * @method toJSON
+        * @memberof MeshFilter
+        * @brief returns this as JSON
+        * @return Object
+        */
+        MeshFilter.prototype.toJSON = function() {
+            
+            return {
+                type: this._type,
+                castShadows: this.castShadows,
+                receiveShadows: this.receiveShadows,
+                mesh: this.mesh && this.mesh.toJSON(),
+                material: this.material.toJSON()
+            };
+        };
+
+        /**
+        * @method fromJSON
+        * @memberof MeshFilter
+        * @brief returns this from JSON object
+        * @param Object json
+        * @return this
+        */
+        MeshFilter.prototype.fromJSON = function(json) {
+            
+            this.castShadows = json.castShadows;
+            this.receiveShadows = json.receiveShadows;
+
+            this.mesh = new Mesh().fromJSON(json.mesh);
+            this.material = new Material().fromJSON(json.material);
+            
             return this;
         };
 

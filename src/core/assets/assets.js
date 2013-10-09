@@ -15,19 +15,19 @@ define([
             BROWSER = typeof(window) !== "undefined";
 
         /**
-         * @class Assets
-         * @extends Class
-         * @brief class for manageing assets
-         */
+        * @class Assets
+        * @extends Class
+        * @brief class for manageing assets
+        */
 
         function Assets() {
 
             Class.call(this);
 
             /**
-             * @property Boolean loading
-             * @memberof Assets
-             */
+            * @property Boolean loading
+            * @memberof Assets
+            */
             this.loading = false;
 
             this._assets = {};
@@ -38,22 +38,22 @@ define([
         Class.extend(Assets, Class);
 
         /**
-         * @method get
-         * @memberof Assets
-         * @brief returns Asset by name
-         * @param Asset asset
-         * @param Function callback
-         */
+        * @method get
+        * @memberof Assets
+        * @brief returns Asset by name
+        * @param Asset asset
+        * @param Function callback
+        */
         Assets.prototype.get = function(name) {
 
             return this._assets[name] || this._queue[name];
         };
 
         /**
-         * @method addAssets
-         * @memberof Assets
-         * @brief adds all Assets in arguments to this, make sure passed is name, src, name, src....
-         */
+        * @method addAssets
+        * @memberof Assets
+        * @brief adds all Assets in arguments to this, make sure passed is name, src, name, src....
+        */
         Assets.prototype.addAssets = function() {
             var name, src,
                 i, il = arguments.length;
@@ -72,12 +72,12 @@ define([
         };
 
         /**
-         * @method addAsset
-         * @memberof Assets
-         * @brief adds a new Asset with name and src to this
-         * @param String name
-         * @param String src
-         */
+        * @method addAsset
+        * @memberof Assets
+        * @brief adds a new Asset with name and src to this
+        * @param String name
+        * @param String src
+        */
         Assets.prototype.addAsset = function(name, src) {
             var queue = this._queue,
                 assets = this._assets,
@@ -96,18 +96,18 @@ define([
         };
 
         /**
-         * @method add
-         * @memberof Assets
-         * @brief same as Assets.addAssets
-         */
+        * @method add
+        * @memberof Assets
+        * @brief same as Assets.addAssets
+        */
         Assets.prototype.add = Assets.prototype.addAssets;
 
         /**
-         * @method fromJSON
-         * @memberof Assets
-         * @brief sets values from json object
-         * @returns this
-         */
+        * @method fromJSON
+        * @memberof Assets
+        * @brief sets values from json object
+        * @returns this
+        */
         Assets.prototype.fromJSON = function(json) {
             var assets = this._assets,
                 asset, jsonAsset,
@@ -126,11 +126,11 @@ define([
         };
 
         /**
-         * @method toJSON
-         * @memberof Assets
-         * @brief returns json object
-         * @returns Object
-         */
+        * @method toJSON
+        * @memberof Assets
+        * @brief returns json object
+        * @returns Object
+        */
         Assets.prototype.toJSON = function() {
             var json = {},
                 assets = this._assets,
@@ -152,7 +152,7 @@ define([
 
 
         function load(asset) {
-            var self = this,
+            var scope = this,
                 name = asset.name,
                 ext = (asset.src.split(".").pop()).toLowerCase(),
                 EXT = ext.toUpperCase(),
@@ -167,45 +167,45 @@ define([
                 loadFn.call(asset, function(error) {
 
                     if (!error) {
-                        self._assets[name] = asset;
-                        self.emit("load" + EXT, asset);
+                        scope._assets[name] = asset;
+                        scope.emit("load" + EXT, asset);
                     } else {
                         console.warn("Assets load: failed to load " + name + " with error: " + error);
                     }
 
-                    delete self._queue[name];
-                    self._queued--;
+                    delete scope._queue[name];
+                    scope._queued--;
 
-                    if (self._queued <= 0) {
-                        self._queued = 0;
+                    if (scope._queued <= 0) {
+                        scope._queued = 0;
 
-                        self.loading = false;
-                        self.emit("loadAll");
+                        scope.loading = false;
+                        scope.emit("loadAll");
                     }
                 });
             } catch (error) {
                 console.warn('Assets load: no function for extension .' + ext + ' add using Assets.LOAD["' + ext + '"]');
-                delete self._queue[name];
-                self._queued--;
+                delete scope._queue[name];
+                scope._queued--;
 
                 asset.ext = ext;
 
-                if (self._queued <= 0) {
-                    self._queued = 0;
+                if (scope._queued <= 0) {
+                    scope._queued = 0;
 
-                    self.loading = false;
-                    self.emit("loadAll");
+                    scope.loading = false;
+                    scope.emit("loadAll");
                 }
             }
         };
 
 
         LOAD["jpeg"] = LOAD["jpg"] = LOAD["png"] = function(callback) {
-            var self = this,
+            var scope = this,
                 image = new Image;
 
             image.onload = function() {
-                self.data = image;
+                scope.data = image;
                 callback();
             };
             image.onerror = function(error) {
@@ -217,7 +217,7 @@ define([
 
 
         LOAD["json"] = function(callback) {
-            var self = this,
+            var scope = this,
                 request = new XMLHttpRequest;
 
             request.onreadystatechange = function(e) {
@@ -229,7 +229,7 @@ define([
 
                     if ((status > 199 && status < 301) || status === 304) {
 
-                        self.data = JSON.parse(this.responseText);
+                        scope.data = JSON.parse(this.responseText);
                         callback();
                     } else {
                         callback(status);

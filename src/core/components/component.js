@@ -8,43 +8,43 @@ define([
         "use strict";
 
         /**
-         * @class Component
-         * @extends Class
-         * @brief base class for all components
-         * @param String type
-         */
+        * @class Component
+        * @extends Class
+        * @brief base class for all components
+        * @param String type
+        */
 
         function Component(type) {
 
             Class.call(this);
 
             /**
-             * @property Number _serverId
-             * @memberof GameObject
-             */
+            * @property Number _serverId
+            * @memberof GameObject
+            */
             this._serverId = -1;
 
             /**
-             * @property String type
-             * @memberof Component
-             */
+            * @property String type
+            * @memberof Component
+            */
             this._type = type;
 
             /**
-             * @property GameObject gameObject
-             * @memberof Component
-             */
+            * @property GameObject gameObject
+            * @memberof Component
+            */
             this.gameObject = undefined;
-
-            this.camera = undefined;
-            this.emitter = undefined;
-            this.meshfilter = undefined;
-            this.script = undefined;
-            this.transform = undefined;
         }
 
         Class.extend(Component, Class);
-
+        
+        
+        Component.prototype.onExtend = function(child) {
+            
+            Component._types[child.name] = child;
+        };
+        
 
         Component.prototype.init = function() {
 
@@ -78,6 +78,34 @@ define([
 
             return a === b ? -1 : 1;
         };
+
+        /**
+        * @method toJSON
+        * @memberof Component
+        * @brief returns this as JSON
+        * @return Object
+        */
+        Component.prototype.toJSON = function() {
+            
+            return {
+                type: this._type
+            };
+        };
+
+        /**
+        * @method fromJSON
+        * @memberof Component
+        * @brief returns this from JSON object
+        * @param Object json
+        * @return Object
+        */
+        Component.prototype.fromJSON = function(json) {
+            
+            return this;
+        };
+        
+        
+        Component._types = {};
 
 
         return Component;
